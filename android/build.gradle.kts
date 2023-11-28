@@ -30,11 +30,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += "-Xskip-metadata-version-check"
     }
 }
 
 dependencies {
-
+    implementation("com.android.billingclient:billing-ktx:6.1.0")
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")
     implementation("com.google.android.material:material:1.7.0")
