@@ -8,6 +8,7 @@ package-lock.json
 .vscode/settings.json
 yarn.lock
 bun.lockb
+local.properties
 
 /.tauri
 /target
