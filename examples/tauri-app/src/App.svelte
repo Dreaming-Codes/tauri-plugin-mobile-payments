@@ -1,6 +1,6 @@
 <script>
     import Greet from './lib/Greet.svelte'
-    import {init} from 'tauri-plugin-mobile-payments-api'
+    import {init, destroy, startConnection} from 'tauri-plugin-mobile-payments-api'
 
     let response = ''
 
@@ -13,6 +13,26 @@
             reInit: true,
             enablePendingPurchases: true,
             enableAlternativeBillingOnly: false,
+        }).then((returnValue) => {
+            updateResponse("Ok" + returnValue)
+        }).catch((error) => {
+            updateResponse("Error" + error)
+        })
+    }
+
+    function _destroy() {
+        destroy().then((returnValue) => {
+            updateResponse("Ok" + returnValue)
+        }).catch((error) => {
+            updateResponse("Error" + error)
+        })
+    }
+
+    function _startConnection() {
+        startConnection().then((returnValue) => {
+            updateResponse("Ok" + returnValue)
+        }).catch((error) => {
+            updateResponse("Error" + error)
         })
     }
 </script>
@@ -42,6 +62,8 @@
 
     <div>
         <button on:click="{_init}">Init</button>
+        <button on:click="{_destroy}">Destroy</button>
+        <button on:click="{_startConnection}">Start connection</button>
         <div>{@html response}</div>
     </div>
 
