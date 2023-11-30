@@ -6,6 +6,7 @@ import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.TauriPlugin
 import app.tauri.plugin.Plugin
 import app.tauri.plugin.Invoke
+import com.android.billingclient.api.BillingClient
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -16,6 +17,12 @@ class InitArgs {
     var enablePendingPurchases: Boolean = false
     var enableAlternativeBillingOnly: Boolean = false
     var reInit: Boolean = false
+}
+
+@InvokeArg
+class PurchaseArgs {
+    lateinit var productId: String
+    var isSub: Boolean = false
 }
 
 @TauriPlugin
@@ -45,6 +52,14 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     fun startConnection(invoke: Invoke) {
         executeSuspendingCommand(invoke) {
             implementation.startConnection()
+        }
+    }
+
+    @Command
+    fun purchase(invoke: Invoke) {
+        executeSuspendingCommand(invoke) {
+            val args = invoke.parseArgs(PurchaseArgs::class.java)
+            implementation.purchase(args.productId, if (args.isSub) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP)
         }
     }
 

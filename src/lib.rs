@@ -35,7 +35,7 @@ impl<R: Runtime, T: Manager<R>> crate::MobilePaymentsExt<R> for T {
 /// Initializes the plugin.
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
     Builder::new("mobile-payments")
-        .invoke_handler(tauri::generate_handler![commands::init, commands::destroy, commands::start_connection])
+        .invoke_handler(tauri::generate_handler![commands::init, commands::destroy, commands::start_connection, commands::purchase])
         .setup(|app, api| {
             #[cfg(mobile)]
                 let mobile_payments = mobile::init(app, api)?;

@@ -19,3 +19,11 @@ impl Default for InitRequest {
     }
   }
 }
+
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export)]
+#[serde(rename_all = "camelCase")]
+pub struct PurchaseRequest {
+  pub product_id: String,
+  pub is_sub: bool,
+}

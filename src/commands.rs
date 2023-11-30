@@ -2,7 +2,7 @@ use tauri::{AppHandle, command, Runtime};
 #[cfg(mobile)]
 use crate::MobilePaymentsExt;
 
-use crate::{Error, InitRequest, Result};
+use crate::{Error, InitRequest, PurchaseRequest, Result};
 
 #[command]
 pub(crate) fn init<R: Runtime>(app: AppHandle<R>, args: InitRequest) -> Result<()> {
@@ -22,5 +22,12 @@ pub(crate) fn destroy<R: Runtime>(app: AppHandle<R>) -> Result<()> {
 pub(crate) async fn start_connection<R: Runtime>(app: AppHandle<R>) -> Result<()> {
     #[cfg(mobile)]
     return app.mobile_payments().start_connection().await;
+    Err(Error::UnsupportedPlatform)
+}
+
+#[command]
+pub(crate) async fn purchase<R: Runtime>(app: AppHandle<R>, args: PurchaseRequest) -> Result<()> {
+    #[cfg(mobile)]
+    return app.mobile_payments().purchase(args).await;
     Err(Error::UnsupportedPlatform)
 }

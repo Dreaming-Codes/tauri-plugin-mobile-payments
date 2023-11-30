@@ -1,12 +1,11 @@
 package codes.dreaming.plugin.mobile_payments
 
 import android.app.Activity
-import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.BillingResponseCode
-import com.android.billingclient.api.BillingClientStateListener
-import com.android.billingclient.api.BillingResult
-import com.android.billingclient.api.PurchasesUpdatedListener
+import com.android.billingclient.api.BillingClient.ProductType
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.util.ArrayList
 import java.util.concurrent.CancellationException
 import kotlin.coroutines.resume
 
@@ -43,7 +42,7 @@ class MobilePayments(private val activity: Activity) {
             throw IllegalStateException("BillingClient not initialized")
         }
 
-        billingClient?.run {
+        billingClient!!.run {
             endConnection()
             billingClient = null
         }
@@ -55,9 +54,9 @@ class MobilePayments(private val activity: Activity) {
         }
 
         suspendCancellableCoroutine<Unit> { continuation ->
-            billingClient?.startConnection(object : BillingClientStateListener {
+            billingClient!!.startConnection(object : BillingClientStateListener {
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
-                    if (billingResult.responseCode ==  BillingResponseCode.OK) {
+                    if (billingResult.responseCode == BillingResponseCode.OK) {
                         continuation.resume(Unit)
                     } else {
                         continuation.cancel(CancellationException("Billing setup failed with response code: ${billingResult.responseCode}"))
@@ -69,5 +68,45 @@ class MobilePayments(private val activity: Activity) {
                 }
             })
         }
+    }
+
+    suspend fun purchase(productId: String, productType: String): BillingResult {
+        if (billingClient == null) {
+            throw IllegalStateException("BillingClient not initialized.")
+        }
+
+        val productList = ArrayList<QueryProductDetailsParams.Product>()
+        productList.add(
+            QueryProductDetailsParams.Product.newBuilder()
+                .setProductId(productId)
+                .setProductType(productType)
+                .build()
+        )
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(productList)
+            .build();
+
+        val productsDetails = billingClient!!.queryProductDetails(params)
+
+        if (productsDetails.billingResult.responseCode != BillingResponseCode.OK) {
+            throw IllegalStateException("Billing response code: ${productsDetails.billingResult.responseCode}")
+        }
+
+        if (productsDetails.productDetailsList == null || productsDetails.productDetailsList!!.isEmpty()) {
+            throw IllegalStateException("Product details list is empty.")
+        }
+
+
+        val productDetailsParamsList = productsDetails.productDetailsList!!.map { productDetails ->
+            BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(productDetails)
+                .build()
+        }
+
+        val billingFlowParams = BillingFlowParams.newBuilder()
+            .setProductDetailsParamsList(productDetailsParamsList)
+            .build()
+
+        return billingClient!!.launchBillingFlow(activity, billingFlowParams)
     }
 }

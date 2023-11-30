@@ -53,4 +53,15 @@ impl<R: Runtime> MobilePayments<R> {
             }
         }).await.map_err(crate::Error::SpawnBlockingError)?
     }
+
+    pub async fn purchase(&self, payload: PurchaseRequest) -> crate::Result<()> {
+        spawn_blocking({
+            let app = self.0.clone();
+            move || {
+                app
+                    .run_mobile_plugin("purchase", payload)
+                    .map_err(Into::into)
+            }
+        }).await.map_err(crate::Error::SpawnBlockingError)?
+    }
 }
