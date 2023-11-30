@@ -28,10 +28,17 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct MobilePayments<R: Runtime>(PluginHandle<R>);
 
 impl<R: Runtime> MobilePayments<R> {
-  pub fn ping(&self, payload: PingRequest) -> crate::Result<PingResponse> {
+  pub fn init(&self, payload: InitRequest) -> crate::Result<()> {
     self
       .0
-      .run_mobile_plugin("ping", payload)
+      .run_mobile_plugin("init", payload)
+      .map_err(Into::into)
+  }
+  
+  pub fn destory(&self) -> crate::Result<()> {
+    self
+      .0
+      .run_mobile_plugin("destory", ())
       .map_err(Into::into)
   }
 }

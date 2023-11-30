@@ -5,9 +5,9 @@
   "description": "",
   "browser": "webview-dist/index.js",
   "main": "webview-dist/index.js",
-  "types": "webview-dist/index.d.ts",
+  "types": "webview-dist/webview-src/index.d.ts",
   "scripts": {
-    "build": "rollup -c ./webview-src/rollup.config.js",
+    "build": "cargo test export_bindings && rollup -c ./webview-src/rollup.config.js",
     "prepublishOnly": "bun run build",
     "pretest": "bun run build",
     "tauri": "tauri",
@@ -17,13 +17,13 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "13.3.0",
     "@rollup/plugin-terser": "0.4.4",
-    "@rollup/plugin-typescript": "8.3.3",
     "@tauri-apps/cli": "next",
     "rollup": "2.75.6",
     "typescript": "4.7.3"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0-alpha.11",
+    "rollup-plugin-typescript2": "^0.36.0",
     "tslib": "^2.1.0"
   }
 }

@@ -1,13 +1,10 @@
-use tauri::{AppHandle, command, Runtime, State, Window};
+use tauri::{AppHandle, command, Runtime};
 
-use crate::{MyState, Result};
+use crate::{Error, InitRequest, Result};
 
 #[command]
-pub(crate) async fn execute<R: Runtime>(
-  _app: AppHandle<R>,
-  _window: Window<R>,
-  state: State<'_, MyState>,
-) -> Result<String> {
-  state.0.lock().unwrap().insert("key".into(), "value".into());
-  Ok("success".to_string())
+pub(crate) fn init<R: Runtime>(app: AppHandle<R>, args: InitRequest) -> Result<()> {
+    #[cfg(mobile)]
+    return app.mobile_payments().init(args);
+    Err(Error::UnsupportedPlatform)
 }

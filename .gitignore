@@ -12,6 +12,7 @@ local.properties
 
 /.tauri
 /target
+/bindings
 Cargo.lock
 node_modules/
 webview-dist

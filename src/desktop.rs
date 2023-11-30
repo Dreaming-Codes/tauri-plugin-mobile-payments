@@ -14,9 +14,4 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct MobilePayments<R: Runtime>(AppHandle<R>);
 
 impl<R: Runtime> MobilePayments<R> {
-  pub fn ping(&self, payload: PingRequest) -> crate::Result<PingResponse> {
-    Ok(PingResponse {
-      value: payload.value,
-    })
-  }
 }
