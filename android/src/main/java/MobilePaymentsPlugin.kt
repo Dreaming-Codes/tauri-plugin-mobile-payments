@@ -14,15 +14,15 @@ import kotlinx.coroutines.launch
 
 @InvokeArg
 class InitArgs {
-    var enablePendingPurchases: Boolean = false
-    var enableAlternativeBillingOnly: Boolean = false
-    var reInit: Boolean = false
+    var enablePendingPurchases: Boolean? = null
+    var enableAlternativeBillingOnly: Boolean? = null
+    var reInit: Boolean? = null
 }
 
 @InvokeArg
 class PurchaseArgs {
     lateinit var productId: String
-    var isSub: Boolean = false
+    var isSub: Boolean? = null
 }
 
 @TauriPlugin
