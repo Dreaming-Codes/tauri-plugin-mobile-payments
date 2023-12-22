@@ -34,9 +34,9 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
         executeCommand(invoke) {
             val args = invoke.parseArgs(InitArgs::class.java)
             implementation.init(
-                args.enablePendingPurchases,
-                args.enableAlternativeBillingOnly,
-                args.reInit
+                args.enablePendingPurchases!!,
+                args.enableAlternativeBillingOnly!!,
+                args.reInit!!
             )
         }
     }
@@ -59,7 +59,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     fun purchase(invoke: Invoke) {
         executeSuspendingCommand(invoke) {
             val args = invoke.parseArgs(PurchaseArgs::class.java)
-            implementation.purchase(args.productId, if (args.isSub) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP)
+            implementation.purchase(args.productId, if (args.isSub!!) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP)
         }
     }
 
