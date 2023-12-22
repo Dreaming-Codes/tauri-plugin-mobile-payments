@@ -15,10 +15,10 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-alpha.12", features = [] }
+tauri-build = { version = "2.0.0-alpha.13", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-alpha.18", features = [] }
+tauri = { version = "2.0.0-alpha.20", features = [] }
 tauri-plugin-mobile-payments = { path = "../../../" }
 
 [features]
