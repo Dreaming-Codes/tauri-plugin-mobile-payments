@@ -1,4 +1,4 @@
-import {invoke} from "@tauri-apps/api/primitives";
+import {invoke} from "@tauri-apps/api/core";
 import {InitRequest} from "../bindings/InitRequest";
 import {PurchaseRequest} from "../bindings/PurchaseRequest";
 
