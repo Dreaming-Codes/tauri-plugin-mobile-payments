@@ -14,15 +14,15 @@ import kotlinx.coroutines.launch
 
 @InvokeArg
 class InitArgs {
-    var enablePendingPurchases: Boolean? = null
-    var enableAlternativeBillingOnly: Boolean? = null
-    var reInit: Boolean? = null
+    var enablePendingPurchases: Boolean = false
+    var enableAlternativeBillingOnly: Boolean = false
+    var reInit: Boolean = false
 }
 
 @InvokeArg
 class PurchaseArgs {
     lateinit var productId: String
-    var isSub: Boolean? = null
+    lateinit var isSub: String
 }
 
 @TauriPlugin
@@ -59,7 +59,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     fun purchase(invoke: Invoke) {
         executeSuspendingCommand(invoke) {
             val args = invoke.parseArgs(PurchaseArgs::class.java)
-            implementation.purchase(args.productId, if (args.isSub!!) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP)
+            implementation.purchase(args.productId, if (args.isSub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP)
         }
     }
 
