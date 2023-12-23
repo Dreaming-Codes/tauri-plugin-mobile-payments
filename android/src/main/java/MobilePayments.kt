@@ -98,9 +98,14 @@ class MobilePayments(private val activity: Activity) {
 
 
         val productDetailsParamsList = productsDetails.productDetailsList!!.map { productDetails ->
-            BillingFlowParams.ProductDetailsParams.newBuilder()
-                .setProductDetails(productDetails)
-                .build()
+            val productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(productDetails);
+
+            if (productType == ProductType.SUBS) {
+                productDetailsParams.setOfferToken(productDetails.subscriptionOfferDetails!![0]!!.offerToken)
+            }
+
+            productDetailsParams.build()
         }
 
         val billingFlowParams = BillingFlowParams.newBuilder()
