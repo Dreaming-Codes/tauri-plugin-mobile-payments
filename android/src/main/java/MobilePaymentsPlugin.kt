@@ -14,9 +14,9 @@ import kotlinx.coroutines.launch
 
 @InvokeArg
 class InitArgs {
-    var enablePendingPurchases: Boolean = false
-    var enableAlternativeBillingOnly: Boolean = false
-    var reInit: Boolean = false
+    lateinit var enablePendingPurchases: String
+    lateinit var enableAlternativeBillingOnly: String
+    lateinit var reInit: String
 }
 
 @InvokeArg
@@ -34,9 +34,9 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
         executeCommand(invoke) {
             val args = invoke.parseArgs(InitArgs::class.java)
             implementation.init(
-                args.enablePendingPurchases!!,
-                args.enableAlternativeBillingOnly!!,
-                args.reInit!!
+                args.enablePendingPurchases.toBoolean(),
+                args.enableAlternativeBillingOnly.toBoolean(),
+                args.reInit.toBoolean()
             )
         }
     }
