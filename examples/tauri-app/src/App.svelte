@@ -1,6 +1,7 @@
 <script>
     import Greet from './lib/Greet.svelte'
-    import {init, destroy, startConnection} from 'tauri-plugin-mobile-payments-api'
+    import {init, destroy, startConnection, purchase} from 'tauri-plugin-mobile-payments-api'
+    import {Channel} from "@tauri-apps/api/core";
 
     let response = ''
 
@@ -9,14 +10,26 @@
     }
 
     function _init() {
+        let testChannel = new Channel();
+        testChannel.onmessage((message) => {
+            console.log(message)
+        })
+
         init({
             reInit: true,
             enablePendingPurchases: true,
             enableAlternativeBillingOnly: false,
-        }).then((returnValue) => {
+        }, testChannel).then((returnValue) => {
             updateResponse("Ok" + returnValue)
         }).catch((error) => {
             updateResponse("Error" + error)
+        })
+    }
+
+    function _payment() {
+        purchase({
+            isSub: true,
+            productId: 'com.example.product'
         })
     }
 
@@ -64,6 +77,7 @@
         <button on:click="{_init}">Init</button>
         <button on:click="{_destroy}">Destroy</button>
         <button on:click="{_startConnection}">Start connection</button>
+        <button on:click="{_payment}">Start connection</button>
         <div>{@html response}</div>
     </div>
 

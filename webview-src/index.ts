@@ -1,9 +1,9 @@
-import {invoke} from "@tauri-apps/api/core";
+import {Channel, invoke} from "@tauri-apps/api/core";
 import {InitRequest} from "../bindings/InitRequest";
 import {PurchaseRequest} from "../bindings/PurchaseRequest";
 
-export async function init(args: InitRequest) {
-    await invoke('plugin:mobile-payments|init', {args})
+export async function init(args: InitRequest, channel: Channel) {
+    await invoke('plugin:mobile-payments|init', {args, channel})
 }
 
 export async function destroy() {

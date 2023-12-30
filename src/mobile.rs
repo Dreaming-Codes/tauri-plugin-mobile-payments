@@ -29,7 +29,7 @@ pub fn init<R: Runtime, C: DeserializeOwned>(
 pub struct MobilePayments<R: Runtime>(PluginHandle<R>);
 
 impl<R: Runtime> MobilePayments<R> {
-    pub fn init(&self, payload: InitRequest) -> crate::Result<()> {
+    pub fn init(&self, payload: KotlinInitRequest) -> crate::Result<()> {
         self
             .0
             .run_mobile_plugin("init", payload)

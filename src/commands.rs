@@ -1,13 +1,14 @@
 use tauri::{AppHandle, command, Runtime};
+use tauri::ipc::Channel;
 #[cfg(mobile)]
-use crate::MobilePaymentsExt;
+use crate::{MobilePaymentsExt, KotlinInitRequest};
 
-use crate::{Error, InitRequest, PurchaseRequest, Result};
+use crate::{Error, PurchaseRequest, Result, TsInitRequest};
 
 #[command]
-pub(crate) fn init<R: Runtime>(app: AppHandle<R>, args: InitRequest) -> Result<()> {
+pub(crate) fn init<R: Runtime>(app: AppHandle<R>, args: TsInitRequest, channel: Channel) -> Result<()> {
     #[cfg(mobile)]
-    return app.mobile_payments().init(args);
+    return app.mobile_payments().init(KotlinInitRequest::from_ts(args, channel));
     Err(Error::UnsupportedPlatform)
 }
 

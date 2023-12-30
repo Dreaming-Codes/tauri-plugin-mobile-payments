@@ -4,6 +4,7 @@ import android.app.Activity
 import app.tauri.annotation.Command
 import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.TauriPlugin
+import app.tauri.plugin.Channel
 import app.tauri.plugin.Plugin
 import app.tauri.plugin.Invoke
 import com.android.billingclient.api.BillingClient
@@ -17,6 +18,7 @@ class InitArgs {
     lateinit var enablePendingPurchases: String
     lateinit var enableAlternativeBillingOnly: String
     lateinit var reInit: String
+    lateinit var purchasesUpdatedChannel: Channel
 }
 
 @InvokeArg
@@ -36,7 +38,8 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
             implementation.init(
                 args.enablePendingPurchases.toBoolean(),
                 args.enableAlternativeBillingOnly.toBoolean(),
-                args.reInit.toBoolean()
+                args.reInit.toBoolean(),
+                args.purchasesUpdatedChannel
             )
         }
     }

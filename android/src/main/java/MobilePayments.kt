@@ -1,22 +1,22 @@
 package codes.dreaming.plugin.mobile_payments
 
 import android.app.Activity
+import app.tauri.plugin.Channel
 import com.android.billingclient.api.*
 import com.android.billingclient.api.BillingClient.BillingResponseCode
 import com.android.billingclient.api.BillingClient.ProductType
 import kotlinx.coroutines.suspendCancellableCoroutine
-import java.util.ArrayList
 import java.util.concurrent.CancellationException
+import kotlin.collections.ArrayList
 import kotlin.coroutines.resume
+
+@Suppress("unused")
+class PurchasesUpdatedChannelMessage(var billingResult: BillingResult, var purchases: List<Purchase>)
 
 class MobilePayments(private val activity: Activity) {
     private var billingClient: BillingClient? = null
 
-    private var purchasesUpdatedListener = PurchasesUpdatedListener { billingResult, purchases ->
-        // To be implemented in a later section.
-    }
-
-    fun init(enablePendingPurchases: Boolean, enableAlternativeBillingOnly: Boolean, reInit: Boolean) {
+    fun init(enablePendingPurchases: Boolean, enableAlternativeBillingOnly: Boolean, reInit: Boolean, purchasesUpdatedChannel: Channel) {
         if (billingClient != null) {
             if (reInit) {
                 destroy()
@@ -26,7 +26,11 @@ class MobilePayments(private val activity: Activity) {
         }
 
         billingClient = BillingClient.newBuilder(activity).apply {
-            setListener(purchasesUpdatedListener)
+            setListener { billingResult, purchases ->
+                PurchasesUpdatedChannelMessage(billingResult, purchases.orEmpty()).let {
+                    purchasesUpdatedChannel.sendObject(it)
+                }
+            }
 
             if (enablePendingPurchases) {
                 enablePendingPurchases()
