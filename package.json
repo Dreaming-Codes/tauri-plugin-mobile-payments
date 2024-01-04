@@ -13,15 +13,15 @@
     "tauri": "tauri",
     "example": "cd examples/tauri-app && bun install && bun tauri android dev"
   },
+  "peerDependencies": {
+    "@tauri-apps/api": "^2.0.0-alpha.13"
+  },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "13.3.0",
     "@rollup/plugin-terser": "0.4.4",
     "@tauri-apps/cli": "next",
     "rollup": "2.75.6",
-    "typescript": "4.7.3"
-  },
-  "dependencies": {
-    "@tauri-apps/api": "^2.0.0-alpha.13",
+    "typescript": "4.7.3",
     "rollup-plugin-typescript2": "^0.36.0",
     "tslib": "^2.1.0"
   }
