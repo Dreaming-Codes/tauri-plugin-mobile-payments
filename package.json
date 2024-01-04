@@ -11,8 +11,7 @@
     "prepublishOnly": "bun run build",
     "pretest": "bun run build",
     "tauri": "tauri",
-    "postinstall": "cd examples/tauri-app && bun install",
-    "example": "cd examples/tauri-app && bun tauri android dev"
+    "example": "cd examples/tauri-app && bun install && bun tauri android dev"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "13.3.0",
