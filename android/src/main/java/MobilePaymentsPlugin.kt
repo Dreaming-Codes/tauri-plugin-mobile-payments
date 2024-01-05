@@ -18,7 +18,7 @@ class InitArgs {
     lateinit var enablePendingPurchases: String
     lateinit var enableAlternativeBillingOnly: String
     lateinit var reInit: String
-    lateinit var purchasesUpdatedChannel: Channel
+    lateinit var channel: Channel
 }
 
 @InvokeArg
@@ -39,7 +39,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
                 args.enablePendingPurchases.toBoolean(),
                 args.enableAlternativeBillingOnly.toBoolean(),
                 args.reInit.toBoolean(),
-                args.purchasesUpdatedChannel
+                args.channel
             )
         }
     }
