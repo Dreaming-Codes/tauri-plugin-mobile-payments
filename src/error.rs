@@ -8,11 +8,8 @@ pub enum Error {
   Io(#[from] std::io::Error),
   #[error(transparent)]
   SpawnBlockingError(tauri::Error),
-  #[cfg(mobile)]
   #[error(transparent)]
   PluginInvoke(#[from] tauri::plugin::mobile::PluginInvokeError),
-  #[error("unsupported platform")]
-  UnsupportedPlatform
 }
 
 impl Serialize for Error {

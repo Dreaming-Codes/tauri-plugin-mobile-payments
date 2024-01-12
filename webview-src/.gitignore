@@ -64,3 +64,5 @@ typings/
 debug.log
 package-lock.json
 .vscode/settings.json
+
+./bindings.ts

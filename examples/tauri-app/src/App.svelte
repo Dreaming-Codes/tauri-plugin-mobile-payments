@@ -1,7 +1,6 @@
 <script>
     import Greet from './lib/Greet.svelte'
-    import {init, destroy, startConnection, purchase} from 'tauri-plugin-mobile-payments-api'
-    import {Channel} from "@tauri-apps/api/core";
+    import {startConnection, purchase} from 'tauri-plugin-mobile-payments-api'
 
     let response = ''
 
@@ -9,35 +8,10 @@
         response += `[${new Date().toLocaleTimeString()}]` + (typeof returnValue === 'string' ? returnValue : JSON.stringify(returnValue)) + '<br>'
     }
 
-    function _init() {
-        let testChannel = new Channel();
-        testChannel.onmessage((message) => {
-            console.log(message)
-        })
-
-        init({
-            reInit: true,
-            enablePendingPurchases: true,
-            enableAlternativeBillingOnly: false,
-        }, testChannel).then((returnValue) => {
-            updateResponse("Ok" + returnValue)
-        }).catch((error) => {
-            updateResponse("Error" + error)
-        })
-    }
-
     function _payment() {
         purchase({
             isSub: true,
             productId: 'com.example.product'
-        })
-    }
-
-    function _destroy() {
-        destroy().then((returnValue) => {
-            updateResponse("Ok" + returnValue)
-        }).catch((error) => {
-            updateResponse("Error" + error)
         })
     }
 
@@ -74,10 +48,8 @@
     </div>
 
     <div>
-        <button on:click="{_init}">Init</button>
-        <button on:click="{_destroy}">Destroy</button>
         <button on:click="{_startConnection}">Start connection</button>
-        <button on:click="{_payment}">Start connection</button>
+        <button on:click="{_payment}">Start payment</button>
         <div>{@html response}</div>
     </div>
 

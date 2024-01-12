@@ -7,7 +7,7 @@
   "main": "webview-dist/index.js",
   "types": "webview-dist/webview-src/index.d.ts",
   "scripts": {
-    "build": "cargo test export_bindings && rollup -c ./webview-src/rollup.config.js",
+    "build": "tsync -i ./src -o webview-src/bindings.ts && rollup -c ./webview-src/rollup.config.js",
     "prepublishOnly": "bun run build",
     "pretest": "bun run build",
     "tauri": "tauri",
