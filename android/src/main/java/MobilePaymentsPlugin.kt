@@ -24,6 +24,11 @@ class PurchaseArgs {
     lateinit var isSub: String
 }
 
+@InvokeArg
+class SetEventHandlerArgs {
+    lateinit var handler: Channel
+}
+
 @TauriPlugin
 class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     private val implementation = MobilePayments(activity)
@@ -35,6 +40,14 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
             implementation.init(
                 args.alternative_billing_only
             )
+        }
+    }
+
+    @Command
+    fun setEventHandler(invoke: Invoke) {
+        executeCommand(invoke) {
+            val args = invoke.parseArgs(SetEventHandlerArgs::class.java)
+            implementation.setEventHandler(args.handler)
         }
     }
 

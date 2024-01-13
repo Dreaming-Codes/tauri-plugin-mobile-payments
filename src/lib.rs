@@ -4,7 +4,8 @@ use tauri::{
     plugin::{Builder, TauriPlugin},
     Manager, Runtime,
 };
-use tauri::async_runtime::spawn_blocking;
+use tauri::async_runtime::{spawn_blocking};
+use tauri::ipc::{Channel, InvokeBody};
 use tauri::plugin::PluginHandle;
 
 pub use models::*;
@@ -75,6 +76,24 @@ pub fn init<R: Runtime>(args: InitRequest) -> TauriPlugin<R> {
                 let handle = api.register_android_plugin(PLUGIN_IDENTIFIER, "MobilePaymentsPlugin")?;
             #[cfg(target_os = "ios")]
                 let handle = api.register_ios_plugin(init_plugin_mobile - payments)?;
+
+            handle
+                .run_mobile_plugin::<()>("setEventHandler", SetEventHandlerArgs {
+                    handler: Channel::new({
+                        let app = app.clone();
+                        move |event| {
+                            println!("got channel event: {:?}", event);
+
+                            let InvokeBody::Json(json) = event else {
+                                return Err(anyhow::anyhow!("invalid event").into());
+                            };
+
+                            let _ = app.emit("mobile-payments://event", json);
+                            Ok(())
+                        }
+                    })
+                })
+                .expect("failed to set event handler");
 
             handle
                 .run_mobile_plugin::<()>("init", args)

@@ -1,8 +1,7 @@
 use tauri::{AppHandle, command, Runtime};
-use tauri::ipc::Channel;
 use crate::{MobilePaymentsExt};
 
-use crate::{Error, PurchaseRequest, Result};
+use crate::{PurchaseRequest, Result};
 
 #[command]
 pub(crate) async fn start_connection<R: Runtime>(app: AppHandle<R>) -> Result<()> {

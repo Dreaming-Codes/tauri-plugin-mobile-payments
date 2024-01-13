@@ -15,6 +15,7 @@ class PurchasesUpdatedChannelMessage(var billingResult: BillingResult, var purch
 
 class MobilePayments(private val activity: Activity) {
     private var billingClient: BillingClient? = null
+    private var channel: Channel? = null
 
     fun init(enableAlternativeBillingOnly: Boolean) {
         if (billingClient != null) {
@@ -24,7 +25,7 @@ class MobilePayments(private val activity: Activity) {
         billingClient = BillingClient.newBuilder(activity).apply {
             setListener { billingResult, purchases ->
                 PurchasesUpdatedChannelMessage(billingResult, purchases.orEmpty()).let {
-                    //purchasesUpdatedChannel.sendObject(it)
+                    channel?.sendObject(it)
                 }
             }
             enablePendingPurchases()
@@ -32,6 +33,10 @@ class MobilePayments(private val activity: Activity) {
                 enableAlternativeBillingOnly()
             }
         }.build()
+    }
+
+    fun setEventHandler(channel: Channel) {
+        this.channel = channel
     }
 
     suspend fun startConnection() {
@@ -70,7 +75,7 @@ class MobilePayments(private val activity: Activity) {
         )
         val params = QueryProductDetailsParams.newBuilder()
             .setProductList(productList)
-            .build();
+            .build()
 
         val productsDetails = billingClient!!.queryProductDetails(params)
 
@@ -85,7 +90,7 @@ class MobilePayments(private val activity: Activity) {
 
         val productDetailsParamsList = productsDetails.productDetailsList!!.map { productDetails ->
             val productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
-                .setProductDetails(productDetails);
+                .setProductDetails(productDetails)
 
             if (productType == ProductType.SUBS) {
                 productDetailsParams.setOfferToken(productDetails.subscriptionOfferDetails!![0]!!.offerToken)

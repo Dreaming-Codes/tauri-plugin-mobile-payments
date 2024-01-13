@@ -14,6 +14,7 @@ serde = "1.0"
 thiserror = "1.0"
 log = "0.4.20"
 tsync = "1"
+anyhow = "1.0.79"
 
 [build-dependencies]
 tauri-build = { version = "2.0.0-alpha.13" }
