@@ -22,6 +22,7 @@ class InitArgs {
 class PurchaseArgs {
     lateinit var productId: String
     lateinit var isSub: String
+    var obfuscatedAccountId: String? = null
 }
 
 @InvokeArg
@@ -62,7 +63,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     fun purchase(invoke: Invoke) {
         executeSuspendingCommand(invoke) {
             val args = invoke.parseArgs(PurchaseArgs::class.java)
-            implementation.purchase(args.productId, if (args.isSub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP)
+            implementation.purchase(args.productId, if (args.isSub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP, args.obfuscatedAccountId)
         }
     }
 

@@ -61,7 +61,7 @@ class MobilePayments(private val activity: Activity) {
         }
     }
 
-    suspend fun purchase(productId: String, productType: String): BillingResult {
+    suspend fun purchase(productId: String, productType: String, obfuscatedAccountId: String?): BillingResult {
         if (billingClient == null) {
             throw IllegalStateException("BillingClient not initialized.")
         }

@@ -13,6 +13,7 @@ pub(super) struct SetEventHandlerArgs {
 pub struct PurchaseRequest {
   pub product_id: String,
   pub is_sub: bool,
+  pub obfuscated_account_id: Option<String>
 }
 
 #[derive(Serialize)]
