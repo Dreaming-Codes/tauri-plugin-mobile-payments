@@ -100,7 +100,11 @@ class MobilePayments(private val activity: Activity) {
         }
 
         val billingFlowParams = BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(productDetailsParamsList)
+            .setProductDetailsParamsList(productDetailsParamsList).apply {
+                if (obfuscatedAccountId != null) {
+                    setObfuscatedAccountId(obfuscatedAccountId)
+                }
+            }
             .build()
 
         return billingClient!!.launchBillingFlow(activity, billingFlowParams)
