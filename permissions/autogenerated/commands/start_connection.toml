@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-start-connection"
+description = "Enables the start_connection command without any pre-configured scope."
+commands.allow = ["start_connection"]
+
+[[permission]]
+identifier = "deny-start-connection"
+description = "Denies the start_connection command without any pre-configured scope."
+commands.deny = ["start_connection"]

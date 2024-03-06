@@ -1,0 +1,1 @@
+{"mobile-capability":{"identifier":"mobile-capability","description":"","local":true,"windows":["main"],"permissions":["mobile-payments:default"],"platforms":["linux","macOS","windows","android","iOS"]}}

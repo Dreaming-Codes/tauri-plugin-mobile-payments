@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "types": ["@types"]
+      "types": ["@types", "@types/node"]
     },
     "declaration": true,
     "declarationDir": "../webview-dist"

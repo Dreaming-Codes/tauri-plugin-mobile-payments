@@ -1,6 +1,6 @@
 import {invoke} from "@tauri-apps/api/core";
 import {PaymentEvent, PurchaseRequest} from "./bindings";
-import {EventCallback, listen, Options, UnlistenFn} from "@tauri-apps/api/event";
+import {EventCallback, listen, UnlistenFn} from "@tauri-apps/api/event";
 
 
 export async function startConnection() {

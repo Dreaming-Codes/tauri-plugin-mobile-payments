@@ -1,0 +1,6 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "mobile-capability",
+  "permissions": ["mobile-payments:default"],
+  "windows": ["main"]
+}

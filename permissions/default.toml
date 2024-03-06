@@ -1,0 +1,4 @@
+"$schema" = "schemas/schema.json"
+[default]
+description = "Allows initiating payments and starting connections to google payments services"
+permissions = ["allow-start-connection", "allow-purchase"]
