@@ -1,6 +1,6 @@
 {
   "name": "@dreamingcodes/mobile-payments-api",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": "You",
   "description": "",
   "browser": "webview-dist/index.js",
