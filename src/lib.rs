@@ -54,6 +54,17 @@ impl<R: Runtime> MobilePayments<R> {
             }
         }).await.map_err(crate::Error::SpawnBlockingError)?
     }
+
+    pub async fn get_product_list(&self) -> crate::Result<serde_json::Value> {
+        spawn_blocking({
+            let app = self.0.clone();
+            move || {
+                app
+                    .run_mobile_plugin("getProductList", ())
+                    .map_err(Into::into)
+            }
+        }).await.map_err(crate::Error::SpawnBlockingError)?
+    }
 }
 
 /// Extensions to [`tauri::App`], [`tauri::AppHandle`] and [`tauri::Window`] to access the mobile-payments APIs.
@@ -70,7 +81,7 @@ impl<R: Runtime, T: Manager<R>> crate::MobilePaymentsExt<R> for T {
 /// Initializes the plugin.
 pub fn init<R: Runtime>(args: InitRequest) -> TauriPlugin<R> {
     Builder::new("mobile-payments")
-        .invoke_handler(tauri::generate_handler![commands::start_connection, commands::purchase])
+        .invoke_handler(tauri::generate_handler![commands::start_connection, commands::purchase, commands::get_product_list])
         .setup(|app, api| {
             #[cfg(target_os = "android")]
                 let handle = api.register_android_plugin(PLUGIN_IDENTIFIER, "MobilePaymentsPlugin")?;

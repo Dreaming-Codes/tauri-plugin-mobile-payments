@@ -7,26 +7,23 @@ import com.android.billingclient.api.BillingClient.BillingResponseCode
 import com.android.billingclient.api.BillingClient.ProductType
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.concurrent.CancellationException
-import kotlin.collections.ArrayList
 import kotlin.coroutines.resume
 
 @Suppress("unused")
-class PurchasesUpdatedChannelMessage(var billingResult: BillingResult, var purchases: List<Purchase>)
+data class PurchasesUpdatedChannelMessage(val billingResult: BillingResult, val purchases: List<Purchase>)
 
 class MobilePayments(private val activity: Activity) {
     private var billingClient: BillingClient? = null
     private var channel: Channel? = null
 
     fun init(enableAlternativeBillingOnly: Boolean) {
-        if (billingClient != null) {
+        billingClient?.let {
             throw IllegalStateException("BillingClient already initialized")
         }
 
         billingClient = BillingClient.newBuilder(activity).apply {
             setListener { billingResult, purchases ->
-                PurchasesUpdatedChannelMessage(billingResult, purchases.orEmpty()).let {
-                    channel?.sendObject(it)
-                }
+                channel?.sendObject(PurchasesUpdatedChannelMessage(billingResult, purchases.orEmpty()))
             }
             enablePendingPurchases()
             if (enableAlternativeBillingOnly) {
@@ -40,73 +37,91 @@ class MobilePayments(private val activity: Activity) {
     }
 
     suspend fun startConnection() {
-        if (billingClient == null) {
-            throw IllegalStateException("BillingClient not initialized.")
-        }
-
-        suspendCancellableCoroutine<Unit> { continuation ->
-            billingClient!!.startConnection(object : BillingClientStateListener {
-                override fun onBillingSetupFinished(billingResult: BillingResult) {
-                    if (billingResult.responseCode == BillingResponseCode.OK) {
-                        continuation.resume(Unit)
-                    } else {
-                        continuation.cancel(CancellationException("Billing setup failed with response code: ${billingResult.responseCode}"))
+        billingClient?.let { client ->
+            suspendCancellableCoroutine<Unit> { continuation ->
+                client.startConnection(object : BillingClientStateListener {
+                    override fun onBillingSetupFinished(billingResult: BillingResult) {
+                        if (billingResult.responseCode == BillingResponseCode.OK) {
+                            continuation.resume(Unit)
+                        } else {
+                            continuation.cancel(CancellationException("Billing setup failed with response code: ${billingResult.responseCode}"))
+                        }
                     }
-                }
 
-                override fun onBillingServiceDisconnected() {
-                    // TODO: Implement retry logic or notify the rust side that we are disconnected.
-                }
-            })
-        }
+                    override fun onBillingServiceDisconnected() {
+                        // TODO: Implement retry logic or notify the rust side that we are disconnected.
+                    }
+                })
+            }
+        } ?: throw IllegalStateException("BillingClient not initialized.")
+    }
+
+    suspend fun getProductList(): BillingFlowParams.ProductDetailsParams {
+        billingClient?.let { client ->
+            val productList = listOf(
+                QueryProductDetailsParams.Product.newBuilder().build()
+            )
+
+            val params = QueryProductDetailsParams.newBuilder()
+                .setProductList(productList)
+                .build()
+
+            val productsDetails = client.queryProductDetails(params)
+
+            if (productsDetails.billingResult.responseCode != BillingResponseCode.OK) {
+                throw IllegalStateException("Billing response code: ${productsDetails.billingResult.responseCode}")
+            }
+
+            val productDetails = productsDetails.productDetailsList?.firstOrNull()
+                ?: throw IllegalStateException("Product details list is empty.")
+
+            return BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(productDetails)
+                .build()
+        } ?: throw IllegalStateException("BillingClient not initialized.")
     }
 
     suspend fun purchase(productId: String, productType: String, obfuscatedAccountId: String?): BillingResult {
-        if (billingClient == null) {
-            throw IllegalStateException("BillingClient not initialized.")
-        }
+        billingClient?.let { client ->
+            val productList = listOf(
+                QueryProductDetailsParams.Product.newBuilder()
+                    .setProductId(productId)
+                    .setProductType(productType)
+                    .build()
+            )
 
-        val productList = ArrayList<QueryProductDetailsParams.Product>()
-        productList.add(
-            QueryProductDetailsParams.Product.newBuilder()
-                .setProductId(productId)
-                .setProductType(productType)
+            val params = QueryProductDetailsParams.newBuilder()
+                .setProductList(productList)
                 .build()
-        )
-        val params = QueryProductDetailsParams.newBuilder()
-            .setProductList(productList)
-            .build()
 
-        val productsDetails = billingClient!!.queryProductDetails(params)
+            val productsDetails = client.queryProductDetails(params)
 
-        if (productsDetails.billingResult.responseCode != BillingResponseCode.OK) {
-            throw IllegalStateException("Billing response code: ${productsDetails.billingResult.responseCode}")
-        }
-
-        if (productsDetails.productDetailsList == null || productsDetails.productDetailsList!!.isEmpty()) {
-            throw IllegalStateException("Product details list is empty.")
-        }
-
-
-        val productDetailsParamsList = productsDetails.productDetailsList!!.map { productDetails ->
-            val productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
-                .setProductDetails(productDetails)
-
-            if (productType == ProductType.SUBS) {
-                productDetailsParams.setOfferToken(productDetails.subscriptionOfferDetails!![0]!!.offerToken)
+            if (productsDetails.billingResult.responseCode != BillingResponseCode.OK) {
+                throw IllegalStateException("Billing response code: ${productsDetails.billingResult.responseCode}")
             }
 
-            productDetailsParams.build()
-        }
+            val productDetailsList = productsDetails.productDetailsList
+                ?: throw IllegalStateException("Product details list is empty.")
 
-        val billingFlowParams = BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(productDetailsParamsList).apply {
-                if (obfuscatedAccountId != null) {
-                    setObfuscatedAccountId(obfuscatedAccountId)
+            val productDetailsParamsList = productDetailsList.map { productDetails ->
+                BillingFlowParams.ProductDetailsParams.newBuilder()
+                    .setProductDetails(productDetails)
+                    .apply {
+                        if (productType == ProductType.SUBS) {
+                            productDetails.subscriptionOfferDetails?.firstOrNull()?.offerToken?.let { setOfferToken(it) }
+                        }
+                    }
+                    .build()
+            }
+
+            val billingFlowParams = BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(productDetailsParamsList)
+                .apply {
+                    obfuscatedAccountId?.let { setObfuscatedAccountId(it) }
                 }
-            }
-            .build()
+                .build()
 
-        return billingClient!!.launchBillingFlow(activity, billingFlowParams)
+            return client.launchBillingFlow(activity, billingFlowParams)
+        } ?: throw IllegalStateException("BillingClient not initialized.")
     }
 }

@@ -67,6 +67,13 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
         }
     }
 
+    @Command
+    fun getProductList(invoke: Invoke) {
+        executeSuspendingCommand(invoke) {
+            implementation.getProductList()
+        }
+    }
+
     private inline fun executeCommand(invoke: Invoke, action: () -> Unit) {
         try {
             action()
