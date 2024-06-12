@@ -12,7 +12,7 @@ export async function purchase(args: PurchaseRequest) {
 }
 
 export async function getProductList() {
-    return await invoke<object>('plugin:mobile-payments|purchase', {})
+    return await invoke<object>('plugin:mobile-payments|get_product_list', {})
 }
 
 export function listenForPurchases(handler: EventCallback<PaymentEvent>): Promise<UnlistenFn> {
