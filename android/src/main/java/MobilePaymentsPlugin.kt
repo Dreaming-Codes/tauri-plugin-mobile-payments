@@ -8,6 +8,7 @@ import app.tauri.plugin.Channel
 import app.tauri.plugin.Plugin
 import app.tauri.plugin.Invoke
 import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingFlowParams
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -28,6 +29,12 @@ class PurchaseArgs {
 @InvokeArg
 class SetEventHandlerArgs {
     lateinit var handler: Channel
+}
+
+@InvokeArg
+class ProductListArgs {
+    lateinit var inAppProductsId: List<String>
+    lateinit var subscriptionProductsId: List<String>
 }
 
 @TauriPlugin
@@ -68,10 +75,13 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     }
 
     @Command
-    fun getProductList(invoke: Invoke) {
+    fun getProductList(invoke: Invoke): BillingFlowParams.ProductDetailsParams? {
+        var result: BillingFlowParams.ProductDetailsParams? = null
         executeSuspendingCommand(invoke) {
-            implementation.getProductList()
+            val args = invoke.parseArgs(ProductListArgs::class.java)
+            result = implementation.getProductList(args.inAppProductsId, args.subscriptionProductsId)
         }
+        return result
     }
 
     private inline fun executeCommand(invoke: Invoke, action: () -> Unit) {
