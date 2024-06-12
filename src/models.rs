@@ -16,6 +16,14 @@ pub struct PurchaseRequest {
   pub obfuscated_account_id: Option<String>
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[tsync]
+pub struct ProductListRequest {
+  pub in_app_products_id: Vec<String>,
+  pub subscription_products_id: String
+}
+
 #[derive(Serialize)]
 pub struct InitRequest {
   pub alternative_billing_only: bool
