@@ -55,12 +55,12 @@ impl<R: Runtime> MobilePayments<R> {
         }).await.map_err(crate::Error::SpawnBlockingError)?
     }
 
-    pub async fn get_product_list(&self) -> crate::Result<serde_json::Value> {
+    pub async fn get_product_list(&self, payload: ProductListRequest) -> crate::Result<serde_json::Value> {
         spawn_blocking({
             let app = self.0.clone();
             move || {
                 app
-                    .run_mobile_plugin("getProductList", ())
+                    .run_mobile_plugin("getProductList", payload)
                     .map_err(Into::into)
             }
         }).await.map_err(crate::Error::SpawnBlockingError)?
