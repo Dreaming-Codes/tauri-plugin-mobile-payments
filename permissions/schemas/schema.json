@@ -299,6 +299,20 @@
       "type": "string",
       "oneOf": [
         {
+          "description": "allow-get-product-list -> Enables the get_product_list command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-get-product-list"
+          ]
+        },
+        {
+          "description": "deny-get-product-list -> Denies the get_product_list command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-get-product-list"
+          ]
+        },
+        {
           "description": "allow-purchase -> Enables the purchase command without any pre-configured scope.",
           "type": "string",
           "enum": [
