@@ -21,7 +21,7 @@ pub struct PurchaseRequest {
 #[tsync]
 pub struct ProductListRequest {
   pub in_app_products_id: Vec<String>,
-  pub subscription_products_id: String
+  pub subscription_products_id: Vec<String>
 }
 
 #[derive(Serialize)]
