@@ -11,8 +11,8 @@ export async function purchase(args: PurchaseRequest) {
     await invoke('plugin:mobile-payments|purchase', {args})
 }
 
-export async function getProductList(args: PurchaseRequest) {
-    return await invoke<object>('plugin:mobile-payments|purchase', {args})
+export async function getProductList() {
+    return await invoke<object>('plugin:mobile-payments|purchase', {})
 }
 
 export function listenForPurchases(handler: EventCallback<PaymentEvent>): Promise<UnlistenFn> {
