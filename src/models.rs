@@ -20,8 +20,8 @@ pub struct PurchaseRequest {
 #[serde(rename_all = "camelCase")]
 #[tsync]
 pub struct ProductListRequest {
-  pub in_app_products_id: Vec<String>,
-  pub subscription_products_id: Vec<String>
+  pub products_id: Vec<String>,
+  pub sub: bool
 }
 
 #[derive(Serialize)]

@@ -7,12 +7,15 @@ import app.tauri.annotation.TauriPlugin
 import app.tauri.plugin.Channel
 import app.tauri.plugin.Plugin
 import app.tauri.plugin.Invoke
+import app.tauri.plugin.JSObject
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingFlowParams
+import com.google.gson.Gson
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 @InvokeArg
 class InitArgs {
@@ -33,8 +36,8 @@ class SetEventHandlerArgs {
 
 @InvokeArg
 class ProductListArgs {
-    lateinit var inAppProductsId: List<String>
-    lateinit var subscriptionProductsId: List<String>
+    lateinit var productsId: List<String>
+    lateinit var sub: String
 }
 
 @TauriPlugin
@@ -48,6 +51,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
             implementation.init(
                 args.alternative_billing_only
             )
+            return@executeCommand JSObject()
         }
     }
 
@@ -56,6 +60,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
         executeCommand(invoke) {
             val args = invoke.parseArgs(SetEventHandlerArgs::class.java)
             implementation.setEventHandler(args.handler)
+            return@executeCommand JSObject()
         }
     }
 
@@ -63,6 +68,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     fun startConnection(invoke: Invoke) {
         executeSuspendingCommand(invoke) {
             implementation.startConnection()
+            return@executeSuspendingCommand JSObject()
         }
     }
 
@@ -71,35 +77,36 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
         executeSuspendingCommand(invoke) {
             val args = invoke.parseArgs(PurchaseArgs::class.java)
             implementation.purchase(args.productId, if (args.isSub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP, args.obfuscatedAccountId)
+            return@executeSuspendingCommand JSObject()
         }
     }
 
     @Command
-    fun getProductList(invoke: Invoke): BillingFlowParams.ProductDetailsParams? {
-        var result: BillingFlowParams.ProductDetailsParams? = null
+    fun getProductList(invoke: Invoke) {
         executeSuspendingCommand(invoke) {
+            println(invoke.parseArgs(Object::class.java))
             val args = invoke.parseArgs(ProductListArgs::class.java)
-            result = implementation.getProductList(args.inAppProductsId, args.subscriptionProductsId)
+            val products = implementation.getProductList(args.productsId, if (args.sub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP);
+
+            val jsonProducts = Gson().toJson(products)
+
+            return@executeSuspendingCommand JSObject(jsonProducts)
         }
-        return result
     }
 
-    private inline fun executeCommand(invoke: Invoke, action: () -> Unit) {
+    private inline fun executeCommand(invoke: Invoke, action: () -> JSObject) {
         try {
-            action()
+            invoke.resolve(action())
         } catch (e: IllegalStateException) {
             invoke.reject(e.message)
-            return
         }
-        invoke.resolve()
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private inline fun executeSuspendingCommand(invoke: Invoke, crossinline action: suspend () -> Unit) {
+    private inline fun executeSuspendingCommand(invoke: Invoke, crossinline action: suspend () -> JSObject) {
         GlobalScope.launch(Dispatchers.Default) {
             try {
-                action()
-                invoke.resolve()
+                invoke.resolve(action())
             } catch (e: Exception) {
                 invoke.reject(e.message)
             }

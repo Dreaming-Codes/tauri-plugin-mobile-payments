@@ -56,24 +56,17 @@ class MobilePayments(private val activity: Activity) {
         } ?: throw IllegalStateException("BillingClient not initialized.")
     }
 
-    suspend fun getProductList(inAppProductsId: List<String>, subscriptionProductsId: List<String>): BillingFlowParams.ProductDetailsParams {
+    suspend fun getProductList(productsId: List<String>, productType: String): BillingFlowParams.ProductDetailsParams {
         billingClient?.let { client ->
-            val inAppProductList = inAppProductsId.map { productId ->
+            val productList = productsId.map { productId ->
                 QueryProductDetailsParams.Product.newBuilder()
                     .setProductId(productId)
-                    .setProductType(BillingClient.ProductType.INAPP)
-                    .build()
-            }
-
-            val subscriptionProductList = subscriptionProductsId.map { productId ->
-                QueryProductDetailsParams.Product.newBuilder()
-                    .setProductId(productId)
-                    .setProductType(BillingClient.ProductType.SUBS)
+                    .setProductType(productType)
                     .build()
             }
 
             val params = QueryProductDetailsParams.newBuilder()
-                .setProductList(inAppProductList + subscriptionProductList)
+                .setProductList(productList)
                 .build()
 
             val productsDetails = client.queryProductDetails(params)
