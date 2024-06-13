@@ -15,7 +15,6 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 @InvokeArg
 class InitArgs {
@@ -46,38 +45,34 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
 
     @Command
     fun init(invoke: Invoke) {
-        executeCommand(invoke) {
+        executeVoidCommand(invoke) {
             val args = invoke.parseArgs(InitArgs::class.java)
             implementation.init(
                 args.alternative_billing_only
             )
-            return@executeCommand JSObject()
         }
     }
 
     @Command
     fun setEventHandler(invoke: Invoke) {
-        executeCommand(invoke) {
+        executeVoidCommand(invoke) {
             val args = invoke.parseArgs(SetEventHandlerArgs::class.java)
             implementation.setEventHandler(args.handler)
-            return@executeCommand JSObject()
         }
     }
 
     @Command
     fun startConnection(invoke: Invoke) {
-        executeSuspendingCommand(invoke) {
+        executeSuspendingVoidCommand(invoke) {
             implementation.startConnection()
-            return@executeSuspendingCommand JSObject()
         }
     }
 
     @Command
     fun purchase(invoke: Invoke) {
-        executeSuspendingCommand(invoke) {
+        executeSuspendingVoidCommand(invoke) {
             val args = invoke.parseArgs(PurchaseArgs::class.java)
             implementation.purchase(args.productId, if (args.isSub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP, args.obfuscatedAccountId)
-            return@executeSuspendingCommand JSObject()
         }
     }
 
@@ -101,6 +96,16 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
         }
     }
 
+    private inline fun executeVoidCommand(invoke: Invoke, action: () -> Unit) {
+        try {
+            invoke.resolve()
+        } catch (e: IllegalStateException) {
+            invoke.reject(e.message)
+            return
+        }
+        invoke.resolve()
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     private inline fun executeSuspendingCommand(invoke: Invoke, crossinline action: suspend () -> JSObject) {
         GlobalScope.launch(Dispatchers.Default) {
@@ -109,6 +114,19 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
             } catch (e: Exception) {
                 invoke.reject(e.message)
             }
+        }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    private inline fun executeSuspendingVoidCommand(invoke: Invoke, crossinline action: suspend () -> Unit) {
+        GlobalScope.launch(Dispatchers.Default) {
+            try {
+                invoke.resolve()
+            } catch (e: Exception) {
+                invoke.reject(e.message)
+                return@launch
+            }
+            invoke.resolve()
         }
     }
 }
