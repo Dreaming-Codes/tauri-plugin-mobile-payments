@@ -98,7 +98,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
 
     private inline fun executeVoidCommand(invoke: Invoke, action: () -> Unit) {
         try {
-            invoke.resolve()
+            action()
         } catch (e: IllegalStateException) {
             invoke.reject(e.message)
             return
@@ -121,7 +121,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     private inline fun executeSuspendingVoidCommand(invoke: Invoke, crossinline action: suspend () -> Unit) {
         GlobalScope.launch(Dispatchers.Default) {
             try {
-                invoke.resolve()
+                action()
             } catch (e: Exception) {
                 invoke.reject(e.message)
                 return@launch
