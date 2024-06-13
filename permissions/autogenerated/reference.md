@@ -1,7 +1,7 @@
 | Permission | Description |
 |------|-----|
-|`allow-get-product-list`|Enables the get_product_list command without any pre-configured scope.|
-|`deny-get-product-list`|Denies the get_product_list command without any pre-configured scope.|
+|`allow-get-product-price`|Enables the get_product_price command without any pre-configured scope.|
+|`deny-get-product-price`|Denies the get_product_price command without any pre-configured scope.|
 |`allow-purchase`|Enables the purchase command without any pre-configured scope.|
 |`deny-purchase`|Denies the purchase command without any pre-configured scope.|
 |`allow-start-connection`|Enables the start_connection command without any pre-configured scope.|

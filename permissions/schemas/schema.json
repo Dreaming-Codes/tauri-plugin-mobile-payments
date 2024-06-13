@@ -299,17 +299,17 @@
       "type": "string",
       "oneOf": [
         {
-          "description": "allow-get-product-list -> Enables the get_product_list command without any pre-configured scope.",
+          "description": "allow-get-product-price -> Enables the get_product_price command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "allow-get-product-list"
+            "allow-get-product-price"
           ]
         },
         {
-          "description": "deny-get-product-list -> Denies the get_product_list command without any pre-configured scope.",
+          "description": "deny-get-product-price -> Denies the get_product_price command without any pre-configured scope.",
           "type": "string",
           "enum": [
-            "deny-get-product-list"
+            "deny-get-product-price"
           ]
         },
         {
