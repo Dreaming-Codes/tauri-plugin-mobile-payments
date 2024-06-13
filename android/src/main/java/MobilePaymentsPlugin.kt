@@ -9,8 +9,6 @@ import app.tauri.plugin.Plugin
 import app.tauri.plugin.Invoke
 import app.tauri.plugin.JSObject
 import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.BillingFlowParams
-import com.google.gson.Gson
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -35,7 +33,7 @@ class SetEventHandlerArgs {
 
 @InvokeArg
 class ProductListArgs {
-    lateinit var productsId: List<String>
+    lateinit var productId: String
     lateinit var sub: String
 }
 
@@ -77,14 +75,26 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     }
 
     @Command
-    fun getProductList(invoke: Invoke) {
+    fun getProductPrice(invoke: Invoke) {
         executeSuspendingCommand(invoke) {
             val args = invoke.parseArgs(ProductListArgs::class.java)
-            val products = implementation.getProductList(args.productsId, if (args.sub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP);
+            val product = implementation.getProductDetails(args.productId, if (args.sub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP);
 
-            val jsonProducts = Gson().toJson(products)
+            val priceArray = ArrayList<String>()
+            product.zza().subscriptionOfferDetails?.let {
+                it.forEach { offer ->
+                    offer.pricingPhases.pricingPhaseList.forEach { offerPrice ->
+                        priceArray.add(offerPrice.formattedPrice)
+                    }
+                }
+            }
+            product.zza().oneTimePurchaseOfferDetails?.let {
+                priceArray.add(it.formattedPrice)
+            }
 
-            return@executeSuspendingCommand JSObject(jsonProducts)
+            return@executeSuspendingCommand JSObject().apply {
+                put("price", priceArray)
+            }
         }
     }
 

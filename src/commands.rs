@@ -1,5 +1,5 @@
 use tauri::{AppHandle, command, Runtime};
-use crate::{MobilePaymentsExt, ProductListRequest};
+use crate::{MobilePaymentsExt, ProductDetail, ProductPriceRequest};
 
 use crate::{PurchaseRequest, Result};
 
@@ -14,6 +14,6 @@ pub(crate) async fn purchase<R: Runtime>(app: AppHandle<R>, args: PurchaseReques
 }
 
 #[command]
-pub(crate) async fn get_product_list<R: Runtime>(app: AppHandle<R>, args: ProductListRequest) -> Result<serde_json::Value> {
-    app.mobile_payments().get_product_list(args).await
+pub(crate) async fn get_product_price<R: Runtime>(app: AppHandle<R>, args: ProductPriceRequest) -> Result<ProductDetail> {
+    app.mobile_payments().get_product_price(args).await
 }

@@ -56,18 +56,13 @@ class MobilePayments(private val activity: Activity) {
         } ?: throw IllegalStateException("BillingClient not initialized.")
     }
 
-    suspend fun getProductList(productsId: List<String>, productType: String): BillingFlowParams.ProductDetailsParams {
+    suspend fun getProductDetails(productId: String, productType: String): BillingFlowParams.ProductDetailsParams {
         billingClient?.let { client ->
-            val productList = productsId.map { productId ->
-                QueryProductDetailsParams.Product.newBuilder()
-                    .setProductId(productId)
-                    .setProductType(productType)
+            val productList =
+                QueryProductDetailsParams.Product.newBuilder().setProductId(productId).setProductType(productType)
                     .build()
-            }
 
-            val params = QueryProductDetailsParams.newBuilder()
-                .setProductList(productList)
-                .build()
+            val params = QueryProductDetailsParams.newBuilder().setProductList(listOf(productList)).build()
 
             val productsDetails = client.queryProductDetails(params)
 
@@ -78,24 +73,18 @@ class MobilePayments(private val activity: Activity) {
             val productDetails = productsDetails.productDetailsList?.firstOrNull()
                 ?: throw IllegalStateException("Product details list is empty.")
 
-            return BillingFlowParams.ProductDetailsParams.newBuilder()
-                .setProductDetails(productDetails)
-                .build()
+            return BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(productDetails).build()
         } ?: throw IllegalStateException("BillingClient not initialized.")
     }
 
     suspend fun purchase(productId: String, productType: String, obfuscatedAccountId: String?): BillingResult {
         billingClient?.let { client ->
             val productList = listOf(
-                QueryProductDetailsParams.Product.newBuilder()
-                    .setProductId(productId)
-                    .setProductType(productType)
+                QueryProductDetailsParams.Product.newBuilder().setProductId(productId).setProductType(productType)
                     .build()
             )
 
-            val params = QueryProductDetailsParams.newBuilder()
-                .setProductList(productList)
-                .build()
+            val params = QueryProductDetailsParams.newBuilder().setProductList(productList).build()
 
             val productsDetails = client.queryProductDetails(params)
 
@@ -103,26 +92,21 @@ class MobilePayments(private val activity: Activity) {
                 throw IllegalStateException("Billing response code: ${productsDetails.billingResult.responseCode}")
             }
 
-            val productDetailsList = productsDetails.productDetailsList
-                ?: throw IllegalStateException("Product details list is empty.")
+            val productDetailsList =
+                productsDetails.productDetailsList ?: throw IllegalStateException("Product details list is empty.")
 
             val productDetailsParamsList = productDetailsList.map { productDetails ->
-                BillingFlowParams.ProductDetailsParams.newBuilder()
-                    .setProductDetails(productDetails)
-                    .apply {
-                        if (productType == ProductType.SUBS) {
-                            productDetails.subscriptionOfferDetails?.firstOrNull()?.offerToken?.let { setOfferToken(it) }
-                        }
+                BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(productDetails).apply {
+                    if (productType == ProductType.SUBS) {
+                        productDetails.subscriptionOfferDetails?.firstOrNull()?.offerToken?.let { setOfferToken(it) }
                     }
-                    .build()
+                }.build()
             }
 
-            val billingFlowParams = BillingFlowParams.newBuilder()
-                .setProductDetailsParamsList(productDetailsParamsList)
-                .apply {
+            val billingFlowParams =
+                BillingFlowParams.newBuilder().setProductDetailsParamsList(productDetailsParamsList).apply {
                     obfuscatedAccountId?.let { setObfuscatedAccountId(it) }
-                }
-                .build()
+                }.build()
 
             return client.launchBillingFlow(activity, billingFlowParams)
         } ?: throw IllegalStateException("BillingClient not initialized.")

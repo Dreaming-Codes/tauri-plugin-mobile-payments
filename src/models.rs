@@ -19,8 +19,8 @@ pub struct PurchaseRequest {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[tsync]
-pub struct ProductListRequest {
-  pub products_id: Vec<String>,
+pub struct ProductPriceRequest {
+  pub product_id: String,
   pub sub: bool
 }
 
@@ -36,6 +36,13 @@ pub struct InitRequest {
 struct AccountIdentifiers {
   pub obfuscated_account_id: String,
   pub obfuscated_profile_id: String,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[tsync]
+pub struct ProductDetail {
+  pub price: Vec<String>
 }
 
 #[derive(Serialize, Deserialize)]
