@@ -84,7 +84,6 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
     @Command
     fun getProductList(invoke: Invoke) {
         executeSuspendingCommand(invoke) {
-            println(invoke.parseArgs(Object::class.java))
             val args = invoke.parseArgs(ProductListArgs::class.java)
             val products = implementation.getProductList(args.productsId, if (args.sub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP);
 
