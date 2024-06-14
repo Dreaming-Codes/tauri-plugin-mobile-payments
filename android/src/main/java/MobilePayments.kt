@@ -25,7 +25,7 @@ class MobilePayments(private val activity: Activity) {
             setListener { billingResult, purchases ->
                 channel?.sendObject(PurchasesUpdatedChannelMessage(billingResult, purchases.orEmpty()))
             }
-            enablePendingPurchases()
+            enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
             if (enableAlternativeBillingOnly) {
                 enableAlternativeBillingOnly()
             }
