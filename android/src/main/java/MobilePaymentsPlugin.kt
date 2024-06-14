@@ -80,16 +80,16 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
             val args = invoke.parseArgs(ProductListArgs::class.java)
             val product = implementation.getProductDetails(args.productId, if (args.sub.toBoolean()) BillingClient.ProductType.SUBS else BillingClient.ProductType.INAPP);
 
-            val priceArray = ArrayList<String>()
+            var priceArray: Array<String> = emptyArray();
             product.zza().subscriptionOfferDetails?.let {
                 it.forEach { offer ->
                     offer.pricingPhases.pricingPhaseList.forEach { offerPrice ->
-                        priceArray.add(offerPrice.formattedPrice)
+                        priceArray += offerPrice.formattedPrice
                     }
                 }
             }
             product.zza().oneTimePurchaseOfferDetails?.let {
-                priceArray.add(it.formattedPrice)
+                priceArray += it.formattedPrice
             }
 
             return@executeSuspendingCommand JSObject().apply {
