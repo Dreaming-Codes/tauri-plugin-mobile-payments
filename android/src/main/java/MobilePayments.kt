@@ -70,10 +70,18 @@ class MobilePayments(private val activity: Activity) {
                 throw IllegalStateException("Billing response code: ${productsDetails.billingResult.responseCode}")
             }
 
-            val productDetails = productsDetails.productDetailsList?.firstOrNull()
+            val productDetailsList = productsDetails.productDetailsList?.firstOrNull()
                 ?: throw IllegalStateException("Product details list is empty.")
 
-            return BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(productDetails).build()
+            val productDetailsBuilder = BillingFlowParams.ProductDetailsParams.newBuilder().setProductDetails(productDetailsList);
+
+            if (productType == ProductType.SUBS) {
+                productDetailsList.subscriptionOfferDetails?.firstOrNull()?.offerToken?.let { offerToken ->
+                    productDetailsBuilder.setOfferToken(offerToken)
+                }
+            }
+
+            return productDetailsBuilder.build()
         } ?: throw IllegalStateException("BillingClient not initialized.")
     }
 
