@@ -42,7 +42,7 @@ struct AccountIdentifiers {
 #[serde(rename_all = "camelCase")]
 #[tsync]
 pub struct ProductDetail {
-  pub price: Vec<String>
+  pub price: String
 }
 
 #[derive(Serialize, Deserialize)]

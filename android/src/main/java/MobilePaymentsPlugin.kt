@@ -93,7 +93,7 @@ class MobilePaymentsPlugin(private val activity: Activity) : Plugin(activity) {
             }
 
             return@executeSuspendingCommand JSObject().apply {
-                put("price", priceArray)
+                put("price", priceArray[0])
             }
         }
     }
