@@ -1,9 +1,6 @@
 #![cfg(mobile)]
 
-use tauri::{
-    plugin::{Builder, TauriPlugin},
-    Manager, Runtime,
-};
+use tauri::{plugin::{Builder, TauriPlugin}, Manager, Runtime, Emitter};
 use tauri::async_runtime::{spawn_blocking};
 use tauri::ipc::{Channel, InvokeBody};
 use tauri::plugin::PluginHandle;
