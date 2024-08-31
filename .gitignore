@@ -9,6 +9,10 @@ package-lock.json
 yarn.lock
 bun.lockb
 local.properties
+/bin
+/.direnv
+.crates.toml
+.crates2.json
 
 /.tauri
 /target
