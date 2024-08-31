@@ -5,7 +5,7 @@ Allows initiating payments and starting connections to google payments services
 - `allow-start-connection`
 - `allow-purchase`
 
-### Permission Table 
+## Permission Table 
 
 <table>
 <tr>

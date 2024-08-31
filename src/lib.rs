@@ -2,7 +2,7 @@
 
 use tauri::{plugin::{Builder, TauriPlugin}, Manager, Runtime, Emitter};
 use tauri::async_runtime::{spawn_blocking};
-use tauri::ipc::{Channel, InvokeBody};
+use tauri::ipc::{Channel, InvokeResponseBody};
 use tauri::plugin::PluginHandle;
 
 pub use models::*;
@@ -92,7 +92,7 @@ pub fn init<R: Runtime>(args: InitRequest) -> TauriPlugin<R> {
                         move |event| {
                             println!("got channel event: {:?}", event);
 
-                            let InvokeBody::Json(json) = event else {
+                            let InvokeResponseBody::Json(json) = event else {
                                 return Err(anyhow::anyhow!("invalid event").into());
                             };
 
