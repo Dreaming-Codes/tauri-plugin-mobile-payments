@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-update-subscription"
+description = "Enables the update_subscription command without any pre-configured scope."
+commands.allow = ["update_subscription"]
+
+[[permission]]
+identifier = "deny-update-subscription"
+description = "Denies the update_subscription command without any pre-configured scope."
+commands.deny = ["update_subscription"]

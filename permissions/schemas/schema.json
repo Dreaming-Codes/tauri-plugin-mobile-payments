@@ -49,7 +49,7 @@
           "minimum": 1.0
         },
         "description": {
-          "description": "Human-readable description of what the permission does. Tauri convention is to use <h4> headings in markdown content for Tauri documentation generation purposes.",
+          "description": "Human-readable description of what the permission does. Tauri convention is to use `<h4>` headings in markdown content for Tauri documentation generation purposes.",
           "type": [
             "string",
             "null"
@@ -111,7 +111,7 @@
           "type": "string"
         },
         "description": {
-          "description": "Human-readable description of what the permission does. Tauri internal convention is to use <h4> headings in markdown content for Tauri documentation generation purposes.",
+          "description": "Human-readable description of what the permission does. Tauri internal convention is to use `<h4>` headings in markdown content for Tauri documentation generation purposes.",
           "type": [
             "string",
             "null"
@@ -295,53 +295,58 @@
       "type": "string",
       "oneOf": [
         {
-          "description": "allow-get-product-price -> Enables the get_product_price command without any pre-configured scope.",
+          "description": "Enables the get_product_price command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "allow-get-product-price"
-          ]
+          "const": "allow-get-product-price",
+          "markdownDescription": "Enables the get_product_price command without any pre-configured scope."
         },
         {
-          "description": "deny-get-product-price -> Denies the get_product_price command without any pre-configured scope.",
+          "description": "Denies the get_product_price command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "deny-get-product-price"
-          ]
+          "const": "deny-get-product-price",
+          "markdownDescription": "Denies the get_product_price command without any pre-configured scope."
         },
         {
-          "description": "allow-purchase -> Enables the purchase command without any pre-configured scope.",
+          "description": "Enables the purchase command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "allow-purchase"
-          ]
+          "const": "allow-purchase",
+          "markdownDescription": "Enables the purchase command without any pre-configured scope."
         },
         {
-          "description": "deny-purchase -> Denies the purchase command without any pre-configured scope.",
+          "description": "Denies the purchase command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "deny-purchase"
-          ]
+          "const": "deny-purchase",
+          "markdownDescription": "Denies the purchase command without any pre-configured scope."
         },
         {
-          "description": "allow-start-connection -> Enables the start_connection command without any pre-configured scope.",
+          "description": "Enables the start_connection command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "allow-start-connection"
-          ]
+          "const": "allow-start-connection",
+          "markdownDescription": "Enables the start_connection command without any pre-configured scope."
         },
         {
-          "description": "deny-start-connection -> Denies the start_connection command without any pre-configured scope.",
+          "description": "Denies the start_connection command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "deny-start-connection"
-          ]
+          "const": "deny-start-connection",
+          "markdownDescription": "Denies the start_connection command without any pre-configured scope."
         },
         {
-          "description": "default -> Allows initiating payments and starting connections to google payments services",
+          "description": "Enables the update_subscription command without any pre-configured scope.",
           "type": "string",
-          "enum": [
-            "default"
-          ]
+          "const": "allow-update-subscription",
+          "markdownDescription": "Enables the update_subscription command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the update_subscription command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-update-subscription",
+          "markdownDescription": "Denies the update_subscription command without any pre-configured scope."
+        },
+        {
+          "description": "Allows initiating payments and starting connections to google payments services\n#### This default permission set includes:\n\n- `allow-start-connection`\n- `allow-purchase`",
+          "type": "string",
+          "const": "default",
+          "markdownDescription": "Allows initiating payments and starting connections to google payments services\n#### This default permission set includes:\n\n- `allow-start-connection`\n- `allow-purchase`"
         }
       ]
     }

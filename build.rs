@@ -1,4 +1,4 @@
-const COMMANDS: &[&str] = &["start_connection", "purchase", "get_product_price"];
+const COMMANDS: &[&str] = &["start_connection", "purchase", "get_product_price", "update_subscription"];
 
 fn main() {
   tauri_plugin::Builder::new(COMMANDS)

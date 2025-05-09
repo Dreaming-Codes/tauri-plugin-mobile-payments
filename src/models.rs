@@ -19,6 +19,17 @@ pub struct PurchaseRequest {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 #[tsync]
+pub struct UpdateSubscriptionRequest {
+    pub new_product_id: String, // ID of the target subscription tier
+    pub old_purchase_token: String, // Token of the current subscription
+    // #[tsync(optional)] // Make optional in TS if default is handled in Kotlin/JS
+    pub replacement_mode: Option<String>, // e.g., "IMMEDIATE_WITH_TIME_PRORATION", "DEFERRED"
+    pub obfuscated_account_id: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[tsync]
 pub struct ProductPriceRequest {
   pub product_id: String,
   pub sub: bool
@@ -27,6 +38,13 @@ pub struct ProductPriceRequest {
 #[derive(Serialize)]
 pub struct InitRequest {
   pub alternative_billing_only: bool
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[tsync]
+pub struct ActiveSubTokenArgs {
+    pub product_id: String,
 }
 
 
@@ -38,12 +56,18 @@ struct AccountIdentifiers {
   pub obfuscated_profile_id: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 #[tsync]
 pub struct ProductDetail {
-  pub price: String
+  pub formatted_price: Option<String>,
+  pub currency_code: Option<String>,
+  // #[tsync(optional)] // Mark as optional in TS
+  pub price_amount_micros: Option<i64>, // Use i64 for micros
+  // Add other fields if needed (e.g., offer details)
 }
+
+
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

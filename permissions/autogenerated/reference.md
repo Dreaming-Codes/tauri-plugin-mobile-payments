@@ -2,10 +2,12 @@
 
 Allows initiating payments and starting connections to google payments services
 
+#### This default permission set includes the following:
+
 - `allow-start-connection`
 - `allow-purchase`
 
-## Permission Table 
+## Permission Table
 
 <table>
 <tr>
@@ -88,6 +90,32 @@ Enables the start_connection command without any pre-configured scope.
 <td>
 
 Denies the start_connection command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-payments:allow-update-subscription`
+
+</td>
+<td>
+
+Enables the update_subscription command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`mobile-payments:deny-update-subscription`
+
+</td>
+<td>
+
+Denies the update_subscription command without any pre-configured scope.
 
 </td>
 </tr>
